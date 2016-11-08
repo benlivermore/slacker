@@ -27,14 +27,14 @@ Status: ${ticket.EntityState.Name}`
         return res.json({
           response_type: 'ephemeral',
           text: `https://intellifylearning.tpondemand.com/entity/${entity}`,
-          attachment: {
+          attachments: [{
             text: message
-          }
+          }]
         });
       } else {
         return res.json({});
       }
-    })
+    });
   }
 
   return res.json({});
