@@ -24,7 +24,7 @@ app.post('/tp/ticket', function (req, res) {
     });
     const whereClause = `&where=Id in (${tickets.join(',')})`;
     console.log(tickets);
-    return request(`https://intellifylearning.tpondemand.com/api/v1/UserStories/?access_token=${tpToken}&format=json&${whereClause}`, function (error, response, body) {
+    return request(`https://intellifylearning.tpondemand.com/api/v1/Assignables/?access_token=${tpToken}&format=json&${whereClause}`, function (error, response, body) {
       if (!error && response.statusCode == 200) {
         const items = JSON.parse(body).Items;
         
