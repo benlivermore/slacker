@@ -25,7 +25,7 @@ app.post('/tp/ticket', function (req, res) {
         `${ticket.Name}
 Status: ${ticket.EntityState.Name}`
         return res.json({
-          response_type: 'ephemeral',
+          response_type: 'in_channel',
           text: `https://intellifylearning.tpondemand.com/entity/${entity}`,
           attachments: [{
             text: message
