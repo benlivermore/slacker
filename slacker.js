@@ -15,39 +15,35 @@ app.post('/tp/ticket', function (req, res) {
   const args = req.body.text;
   if (command === '/ticket') {
 
-    const text = args.trim();
-
-    let responseText;
-    if (!isNaN(text)) {
-      responseText = `https://intellifylearning.tpondemand.com/entity/${text}`;
-      return request(`https://intellifylearning.tpondemand.com/api/v1/UserStories/${text}?access_token=${tpToken}&format=json`, function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-          const ticket = JSON.parse(body);
-          
-          const message = 
-          `${ticket.Name}
-  Status: ${ticket.EntityState.Name}`
-          return res.json({
-            response_type: 'in_channel',
-            text: responseText,
-            attachments: [{
-              text: message
-            }]
-          });
-        } else {
-          return res.json({});
-        }
-      });
-    } else {
-      responseText = text.replace(/#[0-9]*/, (ticketDisplay) => {
-        const entity = ticketDisplay.substr(1);
-        return `<https://intellifylearning.tpondemand.com/entity/${entity}|${ticketDisplay}>`
-      });
-      return res.json({
-        response_type: 'in_channel',
-        text: responseText
-      })
-    }
+    const responseText = req.body.text.replace(/#[0-9]*/g, (ticketDisplay) => {
+      const entity = ticketDisplay.substr(1);
+      return `<https://intellifylearning.tpondemand.com/entity/${entity}|${ticketDisplay}>`
+    });
+    const tickets = args.match(/^[0-9]*|#[0-9]*/g).map((ticketNum) => {
+      return ticketNum.replace('#', '');
+    });
+    const whereClause = `&where=Id in (${tickets.join(',')})`;
+    
+    return request(`https://intellifylearning.tpondemand.com/api/v1/UserStories/?access_token=${tpToken}&format=json&${whereClause}`, function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        const items = JSON.parse(body).Items;
+        
+        const attachments = items.map((ticket) => {
+          return {
+            pretext: `https://intellifylearning.tpondemand.com/entity/${ticket.Id}`,
+            text: `${ticket.Name}
+Status: ${ticket.EntityState.Name}`
+          }
+        })
+        return res.json({
+          response_type: 'in_channel',
+          text: responseText,
+          attachments
+        });
+      } else {
+        return res.json({});
+      }
+    });
 
   }
 
