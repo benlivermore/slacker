@@ -1,0 +1,22 @@
+{
+  "name": "b-slacker",
+  "version": "1.0.0",
+  "description": "Integration with slacker",
+  "main": "web.js",
+  "scripts": {
+    "start": "node ./slacker.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "heroku"
+  ],
+  "author": "bbl",
+  "license": "MIT",
+  "engines": {
+    "node": "5.11.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0"
+  }
+}
