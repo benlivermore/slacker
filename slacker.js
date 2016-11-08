@@ -15,15 +15,15 @@ app.post('/tp/ticket', function (req, res) {
   const args = req.body.text;
   if (command === '/ticket') {
 
-    const responseText = req.body.text.replace(/#[0-9]*/g, (ticketDisplay) => {
+    const responseText = req.body.text.replace(/#[0-9]+/g, (ticketDisplay) => {
       const entity = ticketDisplay.substr(1);
       return `<https://intellifylearning.tpondemand.com/entity/${entity}|${ticketDisplay}>`
     });
-    const tickets = args.match(/^[0-9]*|#[0-9]*/g).map((ticketNum) => {
+    const tickets = args.match(/^[0-9]+|#[0-9]+/g).map((ticketNum) => {
       return ticketNum.replace('#', '');
     });
     const whereClause = `&where=Id in (${tickets.join(',')})`;
-    
+    console.log(tickets);
     return request(`https://intellifylearning.tpondemand.com/api/v1/UserStories/?access_token=${tpToken}&format=json&${whereClause}`, function (error, response, body) {
       if (!error && response.statusCode == 200) {
         const items = JSON.parse(body).Items;
